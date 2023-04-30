@@ -6,8 +6,11 @@ import {
   Quaternion,
   Vector3,
 } from "three";
+import * as RAPIER from "@dimforge/rapier3d";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { W, A, D, S, DIRECTIONS } from "./KeyCode";
+
+export const CONTROLLER_BODY_RADIUS = 0.28;
 
 export class CharacterControls {
   model: Group;
@@ -25,11 +28,16 @@ export class CharacterControls {
   rotateAngle = new Vector3(0, 1, 0);
   rotateQuartenion: Quaternion = new Quaternion();
   cameraTarget = new Vector3();
+  storedFall = 0;
 
   // constants
   fadeDuration: number = 0.2;
   runVelocity = 5;
   walkVelocity = 2;
+
+  world: RAPIER.World;
+  ray: RAPIER.Ray;
+  rigidBody: RAPIER.RigidBody;
 
   constructor(
     model: Group,
@@ -37,7 +45,10 @@ export class CharacterControls {
     animationsMap: Map<string, AnimationAction>,
     orbitControl: OrbitControls,
     camera: Camera,
-    currentAction: string
+    currentAction: string,
+    world: RAPIER.World,
+    ray: RAPIER.Ray,
+    rigidBody: RAPIER.RigidBody
   ) {
     this.model = model;
     this.mixer = mixer;
@@ -50,6 +61,13 @@ export class CharacterControls {
         value.play();
       }
     });
+    this.world = world;
+    this.ray = ray;
+    this.rigidBody = rigidBody;
+  }
+
+  lerp(x: number, y: number, a: number) {
+    return x * (1 - a) + y * a;
   }
 
   switchRunToggle() {
@@ -82,46 +100,86 @@ export class CharacterControls {
     // アニメーションを更新
     this.mixer.update(delta);
 
+    this.walkDirection.x = this.walkDirection.y = this.walkDirection.z = 0;
+
+    let velocity = 0;
+
     if (this.currentAction === "Run" || this.currentAction === "Walk") {
       // 進行方向に合わせてキャラクターの向きを変える
       const angleYCameraDirection = Math.atan2(
         this.camera.position.x - this.model.position.x,
         this.camera.position.z - this.model.position.z
       );
+
+      // オフセットを取得
       const directionOffset = this.directionOffset(keyspressed);
+
+      // モデルを回転
       this.rotateQuartenion.setFromAxisAngle(
         this.rotateAngle,
         angleYCameraDirection + directionOffset
       );
       this.model.quaternion.rotateTowards(this.rotateQuartenion, 0.2);
 
+      // 方向を計算
       this.camera.getWorldDirection(this.walkDirection);
       this.walkDirection.y = 0;
       this.walkDirection.normalize();
       this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
 
       // 移動する量を計算
-      const velocity =
+      velocity =
         this.currentAction === "Run" ? this.runVelocity : this.walkVelocity;
+    }
 
-      // キャラクターの位置を移動させる
-      const moveX = this.walkDirection.x * velocity * delta;
-      const moveZ = this.walkDirection.z * velocity * delta;
-      this.model.position.x += moveX;
-      this.model.position.z += moveZ;
-
-      // カメラの向きを変える
-      this.updateCameraTarget(moveX, moveZ);
+    const translation = this.rigidBody.translation();
+    if (translation.y < -1) {
+      this.rigidBody.setNextKinematicTranslation({ x: 0, y: 10, z: 0 });
     } else {
-      // カメラの向きを変える
-      this.updateCameraTarget(0, 0);
+      // カメラとモデルを更新
+      const cameraPositionOffset = this.camera.position.sub(
+        this.model.position
+      );
+      this.model.position.x = translation.x;
+      this.model.position.y = translation.y;
+      this.model.position.z = translation.z;
+      this.updateCameraTarget(cameraPositionOffset);
+
+      this.walkDirection.y += this.lerp(this.storedFall, -9.81 * delta, 0.1);
+      this.storedFall = this.walkDirection.y;
+      this.ray.origin.x = translation.x;
+      this.ray.origin.y = translation.y;
+      this.ray.origin.z = translation.z;
+
+      const hit = this.world.castRay(this.ray, 0.5, false);
+      if (hit) {
+        const point = this.ray.pointAt(hit.toi);
+        const diff = translation.y - (point.y + CONTROLLER_BODY_RADIUS);
+        if (diff < 0.0) {
+          this.storedFall = 0;
+          this.walkDirection.y = this.lerp(0, Math.abs(diff), 0.5);
+        }
+      }
+
+      this.walkDirection.x = this.walkDirection.x * velocity * delta;
+      this.walkDirection.z = this.walkDirection.z * velocity * delta;
+
+      this.rigidBody.setNextKinematicTranslation({
+        x: translation.x + this.walkDirection.x,
+        y: translation.y + this.walkDirection.y,
+        z: translation.z + this.walkDirection.z,
+      });
     }
   }
 
-  private updateCameraTarget(moveX: number, moveZ: number) {
-    this.camera.position.x += moveX;
-    this.camera.position.z += moveZ;
+  private updateCameraTarget(offset: Vector3) {
+    // カメラを移動
+    const rigidTranslation = this.rigidBody.translation();
+    this.camera.position.x = rigidTranslation.x + offset.x;
+    this.camera.position.y = rigidTranslation.y + offset.y;
+    this.camera.position.z = rigidTranslation.z + offset.z;
 
+    // カメラの対象を移動
     this.cameraTarget.x = this.model.position.x;
     this.cameraTarget.y = this.model.position.y + 1;
     this.cameraTarget.z = this.model.position.z;
