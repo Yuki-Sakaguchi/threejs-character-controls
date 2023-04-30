@@ -6,7 +6,8 @@ import camera, { orbitControls } from "./feature/Camera";
 import { anbientLight, directionalLight } from "./feature/Light";
 import { createBroundFloor } from "./feature/shapes/GroundFloor";
 import { Player } from "./feature/shapes/Player";
-import loopMachine from "./feature/LoopMachine";
+
+import loopMachine from "./utils/LoopMachine";
 import { initResize } from "./utils/Resize";
 
 function main() {
