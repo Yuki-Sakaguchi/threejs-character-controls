@@ -13,6 +13,13 @@ https://user-images.githubusercontent.com/16290220/235355378-e993af1e-1067-4e16-
   </div>
 </details>
 
+## やりたいこと
+- [ ] ジャンプ
+- [ ] カメラを後ろに回り込むようにしたい
+- [ ] スマホで動かせるようにタップに対応
+- [ ] 他のglbモデルを表示
+- [ ] 画面全体をシェーダーで雰囲気を作る
+
 ## 参考
 * glbモデルを読み込んで歩く
   * https://threejs.org/examples/webgl_animation_skinning_blending.html
