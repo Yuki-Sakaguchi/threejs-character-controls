@@ -9,7 +9,7 @@ const camera = new PerspectiveCamera(
   1000
 );
 camera.position.x = 0;
-camera.position.y = 5;
+camera.position.y = 3;
 camera.position.z = 5;
 
 export const controls = new OrbitControls(camera, renderer.domElement);
