@@ -4,8 +4,14 @@ three.jsでglbファイルを表示し、キャラクターの移動とアニメ
 w, a, s, dで移動  
 [demo](https://yuki-sakaguchi.github.io/threejs-character-controls/dist/index.html)
 
-https://user-images.githubusercontent.com/16290220/235338117-dcdbd7a8-f347-4a32-baf0-d7a6df942c35.mov
+https://user-images.githubusercontent.com/16290220/235355378-e993af1e-1067-4e16-8c54-7ce48e137445.mov
 
+<details>
+  <summary>🎥 過去の動画を見る</summary>
+  <div>
+    <video src="https://user-images.githubusercontent.com/16290220/235338117-dcdbd7a8-f347-4a32-baf0-d7a6df942c35.mov" />
+  </div>
+</details>
 
 ## 参考
 * glbモデルを読み込んで歩く
