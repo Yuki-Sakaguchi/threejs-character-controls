@@ -84,6 +84,9 @@ export class Player {
       const dynamicCollider = RAPIER.ColliderDesc.ball(CONTROLLER_BODY_RADIUS);
       this.world.createCollider(dynamicCollider, rigidBody);
 
+      // 線を書き出したい
+      // new RAPIER.DebugRenderBuffers();
+
       // キャラクターのコントローラーを生成
       this.controls = new CharacterControls(
         model,
