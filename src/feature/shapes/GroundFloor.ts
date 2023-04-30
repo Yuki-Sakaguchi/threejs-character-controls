@@ -17,19 +17,19 @@ export function createBroundFloor() {
   const textureLoader = new TextureLoader();
 
   // const placeholder = textureLoader.load(
-  //   "../../assets/textures/placeholder/placeholder.png"
+  //   "./assets/textures/placeholder/placeholder.png"
   // );
   const sandBaseColor = textureLoader.load(
-    "../../assets/textures/sand/Sand 002_COLOR.jpg"
+    "./assets/textures/sand/Sand 002_COLOR.jpg"
   );
   const sandNormalMap = textureLoader.load(
-    "../../assets/textures/sand/Sand 002_NRM.jpg"
+    "./assets/textures/sand/Sand 002_NRM.jpg"
   );
   const sandHeightMap = textureLoader.load(
-    "../../assets/textures/sand/Sand 002_DISP.jpg"
+    "./assets/textures/sand/Sand 002_DISP.jpg"
   );
   const sandAmbientOcclusion = textureLoader.load(
-    "../../assets/textures/sand/Sand 002_OCC.jpg"
+    "./assets/textures/sand/Sand 002_OCC.jpg"
   );
 
   const width = 80;

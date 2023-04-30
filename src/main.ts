@@ -22,7 +22,7 @@ function main() {
   scene.add(floor);
 
   let characterControls: CharacterControls;
-  new GLTFLoader().load("../assets/models/Soldier.glb", (gltf) => {
+  new GLTFLoader().load("./assets/models/Soldier.glb", (gltf) => {
     const model = gltf.scene;
     model.traverse((object: any) => {
       if (object.isMesh) object.castShadow = true;
