@@ -5,8 +5,8 @@ import renderer from "./feature/Renderer";
 import camera from "./feature/Camera";
 import { initGui } from "./feature/Gui";
 import cube from "./feature/shapes/Cube";
+import loopMachine from "./feature/LoopMachine";
 
-import loopMachine from "./utils/LoopMachine";
 import { initResize } from "./utils/Resize";
 
 function main() {
