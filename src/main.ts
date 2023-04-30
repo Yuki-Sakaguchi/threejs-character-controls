@@ -1,57 +1,33 @@
 import "./style.css";
 
-import { AnimationClip, AnimationMixer, AnimationAction } from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-
 import scene from "./feature/Scene";
 import renderer from "./feature/Renderer";
-import camera, { controls } from "./feature/Camera";
+import camera, { orbitControls } from "./feature/Camera";
 import { anbientLight, directionalLight } from "./feature/Light";
-import loopMachine from "./feature/LoopMachine";
 import { createBroundFloor } from "./feature/shapes/GroundFloor";
+import { Player } from "./feature/shapes/Player";
+import loopMachine from "./feature/LoopMachine";
 import { initResize } from "./utils/Resize";
-import { CharacterControls } from "./utils/CharacterControls";
 
 function main() {
   initResize();
 
+  // ライトを追加
   scene.add(anbientLight);
   scene.add(directionalLight);
 
+  // 床を生成
   const floor = createBroundFloor();
   scene.add(floor);
 
-  let characterControls: CharacterControls;
-  new GLTFLoader().load("./assets/models/Soldier.glb", (gltf) => {
-    const model = gltf.scene;
-    model.traverse((object: any) => {
-      if (object.isMesh) object.castShadow = true;
-    });
-    scene.add(model);
+  // プレイヤーを生成
+  const player = new Player(scene, camera, orbitControls);
 
-    // アニメーション情報を取得し、animationsMapに格納
-    const gltfAnimations: AnimationClip[] = gltf.animations;
-    const mixer = new AnimationMixer(model);
-    const animationsMap: Map<string, AnimationAction> = new Map();
-    gltfAnimations
-      .filter((animation) => animation.name != "TPose")
-      .forEach((animationClip: AnimationClip) => {
-        animationsMap.set(animationClip.name, mixer.clipAction(animationClip));
-      });
-    characterControls = new CharacterControls(
-      model,
-      mixer,
-      animationsMap,
-      controls,
-      camera,
-      "Idle"
-    );
-  });
-
+  // キー入力を監視
   const keysPressed = {};
   document.addEventListener("keydown", (event) => {
-    if (event.shiftKey && characterControls) {
-      characterControls.switchRunToggle();
+    if (event.shiftKey && player.isReady) {
+      player?.controls?.switchRunToggle();
     } else {
       (keysPressed as any)[event.key.toLocaleLowerCase()] = true;
     }
@@ -60,12 +36,18 @@ function main() {
     (keysPressed as any)[event.key.toLocaleLowerCase()] = false;
   });
 
+  // アニメーション
   loopMachine.add((clock) => {
-    let mixerUpdateDelta = clock.getDelta();
-    if (characterControls) {
-      characterControls.update(mixerUpdateDelta, keysPressed);
+    // キャラクターの更新
+    if (player.isReady) {
+      let mixerUpdateDelta = clock.getDelta();
+      player?.controls?.update(mixerUpdateDelta, keysPressed);
     }
-    controls.update();
+
+    // カメラ更新
+    orbitControls.update();
+
+    // 描画
     renderer.render(scene, camera);
   });
 

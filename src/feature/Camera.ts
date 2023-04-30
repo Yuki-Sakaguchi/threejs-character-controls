@@ -12,11 +12,11 @@ camera.position.x = 0;
 camera.position.y = 3;
 camera.position.z = 5;
 
-export const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.minDistance = 5;
-controls.maxDistance = 15;
-controls.maxPolarAngle = Math.PI / 2 - 0.05;
-controls.update();
+export const orbitControls = new OrbitControls(camera, renderer.domElement);
+orbitControls.enableDamping = true;
+orbitControls.minDistance = 5;
+orbitControls.maxDistance = 15;
+orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+orbitControls.update();
 
 export default camera;
