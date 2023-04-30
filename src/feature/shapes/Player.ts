@@ -14,6 +14,8 @@ const playerModelPath = "./assets/models/Soldier.glb?url";
 
 /**
  * プレイヤークラス
+ *
+ * @remarks
  * プレイヤーのモデルの読み込みとプレイヤーを操作する controls の準備ができたら isReady が true になる
  */
 export class Player {
@@ -34,6 +36,10 @@ export class Player {
     this.model = null;
     this.controls = null;
 
+    this.init();
+  }
+
+  init() {
     const loader = new GLTFLoader();
     loader.load(playerModelPath, (gltf) => {
       const model = gltf.scene;
@@ -44,7 +50,7 @@ export class Player {
       });
 
       // シーンに追加
-      scene.add(model);
+      this.scene.add(model);
       this.model = model;
 
       // モデルに含まれるアニメーション情報を取得し、animationsMapに格納
@@ -65,8 +71,8 @@ export class Player {
         model,
         mixer,
         animationsMap,
-        orbitControls,
-        camera,
+        this.orbitControls,
+        this.camera,
         "Idle"
       );
 
