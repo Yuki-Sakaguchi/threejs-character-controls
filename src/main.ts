@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Mesh, Quaternion } from "three";
+import { Group, Mesh, Quaternion } from "three";
 import * as RAPIER from "@dimforge/rapier3d";
 
 import scene from "./feature/Scene";
@@ -9,6 +9,7 @@ import camera, { orbitControls } from "./feature/Camera";
 import { anbientLight, directionalLight } from "./feature/Light";
 import { createBroundFloor } from "./feature/shapes/GroundFloor";
 import { createCube } from "./feature/shapes/Cube";
+import { createCactus } from "./feature/shapes/Cactus";
 import { Player } from "./feature/shapes/Player";
 
 import loopMachine from "./utils/LoopMachine";
@@ -20,13 +21,13 @@ import("@dimforge/rapier3d").then(main);
 /**
  * メイン処理
  */
-function main() {
+async function main() {
   // ワールドの物理演算の設定
   const gravity = { x: 0.0, y: -9.81, z: 0.0 };
   const world = new RAPIER.World(gravity);
 
   // 物理演算とメッシュをペアにして保存する箱を生成
-  const bodys: { rigid: RAPIER.RigidBody; mesh: Mesh }[] = [];
+  const bodys: { rigid: RAPIER.RigidBody; mesh: Mesh | Group }[] = [];
 
   initResize();
 
@@ -41,6 +42,14 @@ function main() {
   // 箱を生成
   const cube = createCube({ scene, world, transition: { x: 5, y: 8 } });
   bodys.push(cube);
+
+  const cactus = await createCactus({
+    scene,
+    world,
+    scale: { x: 5, y: 5, z: 5 },
+    transition: { x: -4, y: 2, z: -5 },
+  });
+  bodys.push(cactus);
 
   // プレイヤーを生成
   const player = new Player(scene, world, camera, orbitControls);
