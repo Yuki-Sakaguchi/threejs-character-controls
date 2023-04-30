@@ -4,7 +4,7 @@ import {
   TextureLoader,
   Texture,
   RepeatWrapping,
-  MeshPhongMaterial,
+  // MeshPhongMaterial,
   Mesh,
 } from "three";
 
@@ -16,9 +16,9 @@ function wrapAndRepeatTexture(map: Texture) {
 export function createBroundFloor() {
   const textureLoader = new TextureLoader();
 
-  const placeholder = textureLoader.load(
-    "../../assets/textures/placeholder/placeholder.png"
-  );
+  // const placeholder = textureLoader.load(
+  //   "../../assets/textures/placeholder/placeholder.png"
+  // );
   const sandBaseColor = textureLoader.load(
     "../../assets/textures/sand/Sand 002_COLOR.jpg"
   );
