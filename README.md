@@ -1,6 +1,12 @@
 # threejs-character-controls
 three.jsでglbファイルを表示し、キャラクターの移動とアニメーションを実装する
 
+w, a, s, dで移動  
+[demo](https://yuki-sakaguchi.github.io/threejs-character-controls/dist/index.html)
+
+https://user-images.githubusercontent.com/16290220/235338117-dcdbd7a8-f347-4a32-baf0-d7a6df942c35.mov
+
+
 ## 参考
 * glbモデルを読み込んで歩く
   * https://threejs.org/examples/webgl_animation_skinning_blending.html
