@@ -1,29 +1,29 @@
+import { Clock } from "three";
+
+type Callback = (clock: Clock) => void;
+
 /**
  * 関数を実行し続けるループマシン
  */
 export class LoopMachine {
-  isRun: boolean;
-  callbacks: Function[];
+  isRun: boolean = false;
+  callbacks: Callback[] = [];
+  clock: Clock = new Clock();
 
-  constructor() {
-    this.isRun = false;
-    this.callbacks = [];
-  }
-
-  add(callback: Function) {
+  add(callback: Callback) {
     const index = this.callbacks.indexOf(callback);
     if (index > -1) return;
     this.callbacks.push(callback);
   }
 
-  remove(callback: Function) {
+  remove(callback: Callback) {
     const index = this.callbacks.indexOf(callback);
     if (index > -1) this.callbacks.splice(index, 1);
   }
 
   run() {
     if (!this.isRun) return;
-    this.callbacks.forEach((callback) => callback());
+    this.callbacks.forEach((callback: Callback) => callback(this.clock));
     window.requestAnimationFrame(this.run.bind(this));
   }
 
