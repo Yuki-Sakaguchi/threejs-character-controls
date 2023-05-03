@@ -15,9 +15,6 @@ import { Player } from "./feature/shapes/Player";
 import loopMachine from "./utils/LoopMachine";
 import { initResize } from "./utils/Resize";
 
-// 物理演算の処理を読み込みが終わったらメイン処理を実行する
-import("@dimforge/rapier3d").then(main);
-
 /**
  * メイン処理
  */
@@ -100,3 +97,6 @@ async function main() {
 
   loopMachine.start();
 }
+
+// 物理演算の処理を読み込みが終わったらメイン処理を実行する
+import("@dimforge/rapier3d").then(main);
